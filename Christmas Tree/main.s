@@ -1,5 +1,5 @@
 .bss
-#Buffers for input
+#Buffers for input/output
 levelNumber: .space 32
 lineBuffer: .space 64
 
