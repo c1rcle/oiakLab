@@ -1,13 +1,13 @@
 .bss
-#Buffer for output
+#Buffer for output.
 outputBuffer: .space 2048
 
 .data
-#Constant values declaration
+#Constant values declaration.
 ASCII_LINE_FEED = 10
 ASCII_NULL_BYTE = 0
 
-#System constant values declaration
+#System constant values declaration.
 WRITE = 4
 EXIT = 1
 
@@ -58,7 +58,7 @@ prepareLine:
     #If we encounter a null byte, we know that the string has ended.
     cmpb $ASCII_NULL_BYTE, %dl
     je endProc
-    #We move that singe character to our output buffer (%esi is the offset).
+    #We move that single character to our output buffer (%esi is the offset).
     movb %dl, outputBuffer(%esi)
     #Then we move to the next byte of a given string.
     incl %edi
