@@ -135,6 +135,7 @@ writeNumber:
     je continueWrite
 
     addCarryToResult:
+    #Add carry to front of output string.
     movl %ecx, %ebx
     incl %ecx
     call shiftString
@@ -142,6 +143,7 @@ writeNumber:
     movb $ASCII_LINE_FEED, inputOutputLineBuffer(%ecx)
 
     continueWrite:
+    #If there will be a zero in front, write starting from second character.
     movl $inputOutputLineBuffer, %esi
     cmpb $ASCII_ZERO, inputOutputLineBuffer
     je writeFromSecondChar
@@ -163,6 +165,8 @@ readNumber:
     decl %eax
     cmpl $32, %eax
     ja wrongInput
+    cmpl $0, %eax
+    je wrongInput
     pushl %eax
     xorl %esi, %esi
     xorl %edx, %edx
@@ -178,6 +182,7 @@ readNumber:
     ret $4
 
 fixLittleEndian:
+    #Change the format of input string to little endian.
     cmpl $1, %edx
     jne return
     movl 4(%esp), %ebx
@@ -190,6 +195,7 @@ fixLittleEndian:
     ret
 
 shiftString:
+    #Shift string by one character right.
     movb inputOutputLineBuffer(%esi), %dl
     incl %esi
     shiftStringNext:
@@ -271,10 +277,13 @@ highestNonNullByte:
     #Find highest non null byte.
     cmpb $0, firstNumberBuffer(%esi)
     jne return
+    cmpl $0, %esi
+    je return
     decl %esi
     jmp nextByte
 
 convertToString:
+    #Convert a byte number represantation to string.
     cmpl %esi, %edi
     jb return
     xorw %ax, %ax
@@ -291,15 +300,18 @@ convertToString:
     jmp convertToString
 
 checkByteType:
+    #Check whether a value byte represents a digit or letter.
     cmpb $0x0a, inputOutputLineBuffer(%ecx)
     jb convertToDigit
     jmp convertToChar
 
 convertToDigit:
+    #Convert a digit to its ASCII representation.
     addb $ASCII_ZERO, inputOutputLineBuffer(%ecx)
     ret
 
 convertToChar:
+    #Convert a letter to its ASCII implementation.
     addb $ASCII_CHAR_DISPLACEMENT, inputOutputLineBuffer(%ecx)
     ret
 
@@ -311,6 +323,7 @@ wrongInput:
     jmp exit
 
 addNumbers:
+    #Starting from the low-order byte add numbers together.
     xorl %esi, %esi
     movl secondNumberBuffer(,%esi,4), %eax
     addl %eax, firstNumberBuffer(,%esi,4)
@@ -320,6 +333,7 @@ addNumbers:
     popfl
     addSecondDoubleWord:
     movl secondNumberBuffer(,%esi,4), %eax
+    #Add carry to the result of addition.
     adcl %eax, firstNumberBuffer(,%esi,4)
     incl %esi
     pushfl
@@ -330,6 +344,7 @@ addNumbers:
     ret
 
 subtractNumbers:
+    #Starting from the low-order byte subtract numbers.
     xorl %esi, %esi
     movl secondNumberBuffer(,%esi,4), %eax
     subl %eax, firstNumberBuffer(,%esi,4)
@@ -339,6 +354,7 @@ subtractNumbers:
     popfl
     subSecondDoubleWord:
     movl secondNumberBuffer(,%esi,4), %eax
+    #Subtract carry from the result of previous subtraction.
     sbbl %eax, firstNumberBuffer(,%esi,4)
     incl %esi
     pushfl
