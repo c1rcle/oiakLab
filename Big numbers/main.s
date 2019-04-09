@@ -10,6 +10,8 @@ inputOutputLineBuffer: .space 64
 #Program constant values declaration.
 INPUT_BUFFER_SIZE = 64
 DOUBLE_WORD_COUNT = 4
+
+#ASCII character codes.
 ASCII_LINE_FEED = 10
 ASCII_ZERO = 48
 ASCII_ONE = 49
@@ -20,8 +22,10 @@ ASCII_CHAR_PLUS = 43
 ASCII_CHAR_MINUS = 45
 ASCII_CHAR_DISPLACEMENT = 55
 
+#Carry status of an operation.
 carryFlagStatus: .byte 0
 
+#Constant output strings.
 inputFirstString: .string "Podaj pierwszą liczbę: \n"
 inputFirstStringLen = . - inputFirstString
 
