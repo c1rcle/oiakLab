@@ -4,6 +4,8 @@ start: .lcomm 4
 end: .lcomm 4
 
 .data
+integral: .float 0
+
 inputTextFormat: .string "%s"
 inputTextStart: .string "Podaj początek przedziału całkowania: "
 inputTextEnd: .string "Podaj koniec przedziału całkowania: "
