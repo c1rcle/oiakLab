@@ -51,45 +51,44 @@ main:
     pushl $floatFormat
     call scanf
     addl $8, %esp
+    pushl $outputTextSin
+    pushl $outputTextFormat
+    call printf
+    addl $8, %esp
 
-	pushl $outputTextSin
-	pushl $outputTextFormat
-	call printf
-	addl $8, %esp
-
-	call calculateIntegral
-	subl $8, %esp
-	flds integral
-	fstpl (%esp)
-	pushl $floatOutputFormat
-	call printf
-	addl $12, %esp 
+    call calculateIntegral
+    subl $8, %esp
+    flds integral
+    fstpl (%esp)
+    pushl $floatOutputFormat
+    call printf
+    addl $12, %esp 
     jmp exit
 
 calculateIntegral:
-	flds end
-	fsub start
-	fidiv rectangleCount
-	fstps stepLength
-	xorl %ecx, %ecx
+    flds end
+    fsub start
+    fidiv rectangleCount
+    fstps stepLength
+    xorl %ecx, %ecx
 
-	rectangleLoop:
-	movl rectangleCount, %eax
-	cmpl %eax, %ecx
-	je loopFinished
-	movl %ecx, currentIndex
-	fild currentIndex
-	fmul stepLength
-	fadd start
-	fsin
-	fmul stepLength
-	fadd integral
-	fstps integral
-	incl %ecx
-	jmp rectangleLoop
+    rectangleLoop:
+    movl rectangleCount, %eax
+    cmpl %eax, %ecx
+    je loopFinished
+    movl %ecx, currentIndex
+    fild currentIndex
+    fmul stepLength
+    fadd start
+    fsin
+    fmul stepLength
+    fadd integral
+    fstps integral
+    incl %ecx
+    jmp rectangleLoop
 
-	loopFinished:
-	ret
+    loopFinished:
+    ret
 
 exit:
     movl $EXIT, %eax
