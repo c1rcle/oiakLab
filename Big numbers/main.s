@@ -38,6 +38,10 @@ inputOperationStringLen = . - inputOperationString
 inputErrorString: .string "Wprowadzona liczba lub operand ma nieprawidłowy format!\n"
 inputErrorStringLen = . - inputErrorString
 
+#Printf and scanf format strings.
+printfFormatString: .string "%.*s\n"
+scanfFormatString: .string "%63[^\n]"
+
 #System constant values declaration.
 READ = 3
 WRITE = 4
@@ -90,6 +94,20 @@ _start:
     subtraction: call subtractNumbers
     call writeNumber
     jmp exit
+
+readStringScanf:
+    #Read string using scanf.
+    pushl $inputOutputLineBuffer
+    pushl $scanfFormatString
+    call scanf
+    ret
+
+writeStringPrintf:
+    #Write specific number of characters using printf.
+    pushl %ecx
+    pushl %esi
+    call printf
+    ret
 
 readString:
     #Read characters to temporary buffer.
