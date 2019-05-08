@@ -1,18 +1,24 @@
 .bss
 inputBuffer: .space 32
-start: .lcomm 4
-end: .lcomm 4
+
+.lcomm start, 4
+.lcomm end, 4
+.lcomm stepLength, 4
+.lcomm integral, 4
 
 .data
-integral: .float 0
+currentIndex: .long 0
+rectangleCount: .long 200
 
-inputTextFormat: .string "%s"
 inputTextStart: .string "Podaj początek przedziału całkowania: "
 inputTextEnd: .string "Podaj koniec przedziału całkowania: "
+outputTextSin: .string "Wynik całki dla funkcji sin(x): "
+outputTextLog: .string "Wynik całki dla funkcji log(x): "
 
-numberInputFormat: .string "%f"
+outputTextFormat: .string "%s"
+floatFormat: .string "%f"
+floatOutputFormat: .string "%f\n"
 
-rectangleCount = 20
 inputBufferSize = 32
 
 READ = 3
@@ -28,24 +34,62 @@ SYSTEM_CALL = 0x80
 .text
 .global main
 main:
-    pushl inputTextStart
-    pushl inputTextFormat
+    pushl $inputTextStart
+    pushl $outputTextFormat
     call printf
     addl $8, %esp
     pushl $start
-    pushl numberInputFormat
+    pushl $floatFormat
     call scanf
     addl $8, %esp
 
-    pushl inputTextEnd
-    pushl inputTextFormat
+    pushl $inputTextEnd
+    pushl $outputTextFormat
     call printf
     addl $8, %esp
     pushl $end
-    pushl numberInputFormat
+    pushl $floatFormat
     call scanf
     addl $8, %esp
+
+	pushl $outputTextSin
+	pushl $outputTextFormat
+	call printf
+	addl $8, %esp
+
+	call calculateIntegral
+	subl $8, %esp
+	flds integral
+	fstpl (%esp)
+	pushl $floatOutputFormat
+	call printf
+	addl $12, %esp 
     jmp exit
+
+calculateIntegral:
+	flds end
+	fsub start
+	fidiv rectangleCount
+	fstps stepLength
+	xorl %ecx, %ecx
+
+	rectangleLoop:
+	movl rectangleCount, %eax
+	cmpl %eax, %ecx
+	je loopFinished
+	movl %ecx, currentIndex
+	fild currentIndex
+	fmul stepLength
+	fadd start
+	fsin
+	fmul stepLength
+	fadd integral
+	fstps integral
+	incl %ecx
+	jmp rectangleLoop
+
+	loopFinished:
+	ret
 
 exit:
     movl $EXIT, %eax
@@ -67,3 +111,4 @@ my_sin:
     movl -4(%ebp), %eax     #Contents of local variable are returned in %eax.
     movl %ebp, %esp         #Dealocate local variables.
     popl %ebp               #Restore previous frame pointer.
+    
