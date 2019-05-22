@@ -12,3 +12,4 @@ my_sin:
     movl %ebp, %esp         #Dealocate local variables.
     popl %ebp               #Restore previous frame pointer.
     ret
+    
