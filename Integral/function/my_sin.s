@@ -11,3 +11,4 @@ my_sin:
     fsin                    #Compute sin(st(0)) and store it in st(0). Returned floating point number should be left on top of the stack.
     movl %ebp, %esp         #Dealocate local variables.
     popl %ebp               #Restore previous frame pointer.
+    ret
